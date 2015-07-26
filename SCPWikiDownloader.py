@@ -1,16 +1,15 @@
 # Downloads every scp page at www.scp-wiki.net
 # and stores every page in an archive.
 import urllib
-import urllib.error
-import urllib.request
+import urllib2
 import os
 import zipfile
-my_zip = zipfile.ZipFile('SCPWiki.zip', 'w', zipfile.ZIP_DEFLATED)
+import time
 
 
 def save_wiki(i):
 
-    while i < 3000:  # The wiki has up to 2999 SCPs as of 26/07/2015.
+    while i < 3000:
         if i < 10:
             url = "http://www.scp-wiki.net/scp-00"
             page = "scp-00"
@@ -27,19 +26,22 @@ def save_wiki(i):
             url += str(i)
             page += str(i)
         try:
-
             status = "Downloading "
             status += page
-            print(status)
-            page += '.html'
-            scp_page = urllib.request.urlretrieve(url, page)  # Download and save page as scp-x.html.
-        except urllib.error.URLError:
-            print("Download failed, page does not exist")
+            print status
+            scp_page = urllib2.urlopen(url)
+            scp_page_content = scp_page.read()
+        except urllib2.HTTPError, e:
+            print "Download failed, page does not exist"
             i += 1
-            save_wiki(i)  # If page does not exist, move on to next page.
+            save_wiki(i)
         else:
-            print("Download Successful")
+            print "Download Successful"
+        page += '.html'
+        with open(page, 'w') as foo:
+            foo.write(scp_page_content)
         i += 1
         my_zip.write(page)
         os.remove(page)
+my_zip = zipfile.ZipFile('SCPWiki.zip', 'w', zipfile.ZIP_DEFLATED)
 save_wiki(1)
