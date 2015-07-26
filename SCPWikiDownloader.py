@@ -27,7 +27,6 @@ def save_wiki(i):
             url += str(i)
             page += str(i)
         try:
-
             status = "Downloading "
             status += page
             print(status)
