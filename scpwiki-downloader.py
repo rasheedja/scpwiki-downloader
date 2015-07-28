@@ -6,6 +6,7 @@ import urllib.request
 import os
 import zipfile
 import datetime
+import time
 
 
 def main():
@@ -26,6 +27,7 @@ def main():
             print("Download Successful")
             compress_page(scp_zip, page)
             i += 1
+        time.sleep(0.35)  # Wikidot allows 3 requests per second.
 
 
 def create_zip():
